@@ -33,7 +33,6 @@ def recherche(t):
                 t[n]["rest"]=x["float"]
                 n=n+1
             except EOFError:
-                print(t)
                 break
 
     # Find specific date
@@ -48,7 +47,7 @@ def recherche(t):
         return
     else:
         print("n'existe pas")
-        traitmentdenombre(a)
+        traitmentdenombre()
 # Function to view file contents
 def vuefich(filename, mode):
     print("-----------------")
@@ -63,7 +62,7 @@ def vuefich(filename, mode):
     if c == 0:
         print("**")
     else:
-        traitmentdenombre(a)
+        traitmentdenombre()
 # Function to delete files
 def fichsupp():
     c = input("si supprimer fichfix taper 2, si supprimer fichtxt taper 1: ")
@@ -76,9 +75,9 @@ def fichsupp():
         open("ficherfix.dat", "wb").close()
     
     print("Suppression avec succès")
-    traitmentdenombre(a)
+    traitmentdenombre()
 # Function to insert new entries
-def Newinsert(t,i,a,o):
+def Newinsert(t,i):
     with open("ficherjdid.txt", "a") as f:
             date_obj = datetime.now()
             day = date_obj.strftime("%A")
@@ -97,9 +96,7 @@ def Newinsert(t,i,a,o):
                     "des": input("tfatheelll ====> "),
                     "cos": f"{date_obj.day}-{date_obj.month}-{date_obj.year}"
                     }
-            tt=(x['tot']-x['mnt'])
-            x={"rest":tt,}
-            print(x)
+            x={"rest":0,}
             t[i]["day"]=x["day"]
             t[i]["mas"]=x["mas"]
             t[i]["mnt"]=x["mnt"]
@@ -117,20 +114,20 @@ def Newinsert(t,i,a,o):
             print("saved")
     f.close()
     if input("t3awed t3abi (true/false): ").lower() != "false":
-            Newinsert(t,i,a,o)
+            Newinsert(t,i)
     if input("enregistrer 0 ou non 1: ") == "0":
             print("fichtxt saved")
             fichierfix(t,i)
     else:
-            traitmentdenombre(a)
+            traitmentdenombre()
 # Function to save data to fixed file
 def fichierfix(t,n):
     with open("ficherfix.dat", "ab") as ft:
         for i in range(n):
             dump(t[i], ft)
-    print("fichfix saved")
+    print("fichfix saved succsfuly")
 # Function to manage main choices
-def traitmentdenombre(a):
+def traitmentdenombre():
     print("Votre choix : ")
     choices = ["REMPLISSAGE JDID", "VUE FIXE", "FICHER SUPRIM", "RECHERCHE DATE EXACT", "Quitter"]
     for i, choice in enumerate(choices):
@@ -143,12 +140,10 @@ def traitmentdenombre(a):
         qq = input("si le tableau est n'existe pas taper entre : ")
         if qq:
             i=loadt(t)
-            o=i-1
-            Newinsert(t,i,a,o)
+            Newinsert(t,i)
         else:
             i=0
-            o=0
-            Newinsert(t,i,a,o)
+            Newinsert(t,i)
     elif n == 2:
         g = int(input("vue fich txt (1) ou fix (0): "))
         vuefich("ficherjdid.txt" if g == 1 else "ficherfix.dat", "rb" if g == 0 else "r")
@@ -170,10 +165,4 @@ dict={
                     "rest":float,
                 }
 t=array([dict]*2)
-print("chhar wfeee ?")
-d=input("si oui taper espace")
-if d:
-    a=1
-else:
-    a=0
-traitmentdenombre(a)
+traitmentdenombre()
