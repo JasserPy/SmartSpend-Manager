@@ -22,7 +22,7 @@ Installation
 Clone the repository:
 bash
 Copy code
-git clone https://github.com/yourusername/smartspend-manager.git
+git clone https://github.com/JasserPy/smartspend-manager.git
 Navigate to the project directory:
 bash
 Copy code
