@@ -1,168 +1,164 @@
 from pickle import load, dump
 from datetime import datetime
-from numpy import array
-# Function load tableau
-def loadt(t):
-    try:
-        with open("ficherfix.dat", "rb") as ft:
-            n = 0
-            while True:
-                x = load(ft)
-                t[n] = x  # Remplacer la ligne par un simple assignement
-                n += 1
-    except EOFError:
-        print(t)
-        return n
-    except FileNotFoundError:
-        print("Le fichier n'existe pas.")
-        return 0
-# Function to search for a specific date
-def recherche(t):
-    with open("ficherfix.dat", "rb") as ft:
-        n=0
-        while True:
-            try:
-                x = load(ft)
-                t[n]["tot"]=x["tot"]
-                t[n]["day"]=x["day"]
-                t[n]["mas"]=x["mas"]
-                t[n]["mnt"]=x["mnt"]
-                t[n]["des"]=x["des"]
-                t[n]["dat"]=x["dat"]
-                t[n]["cos"]=x["cos"]
-                t[n]["rest"]=x["float"]
-                n=n+1
-            except EOFError:
-                break
 
-    # Find specific date
-    i=0
-    x=input("donner la date")
-    while(i>n or t[i]["cos"]!=x):
-        i=i+1
-    if t[i]["cos"]==x:
-        choices = ["DAY :"+str(t[i]["day"]), "MASROUF :"+str(t[i]["mas"]), "9ADECH :"+str(t[i]["mnt"]), "DESCRIPTION :"+str(t[i]["des"]), "DATE EXACT :"+str(t[i]["dat"])]
-        for i, choice in enumerate(choices):
-            print(f" {choice}")
-        return
-    else:
-        print("n'existe pas")
-        traitmentdenombre()
-# Function to view file contents
-def vuefich(filename, mode):
-    print("-----------------")
-    with open(filename, mode) as q:
-        for line in q:
-            if line.find("-")==-1:
-                print(line, end='')
-            else:
-                print(line, end='')
-                print("-----------------")
-    c = int(input("retourner à la liste (1 ou 0): "))
-    if c == 0:
-        print("**")
-    else:
-        traitmentdenombre()
-# Function to delete files
-def fichsupp():
-    c = input("si supprimer fichfix taper 2, si supprimer fichtxt taper 1: ")
-    while not c.isdecimal():
-        c = input("Erreur, si supprimer fichfix taper 1, si supprimer fichtxt taper 2: ")
-    
-    if c == "1":
-        open("ficherjdid.txt", "w").close()
-    elif c == "2":
-        open("ficherfix.dat", "wb").close()
-    
-    print("Suppression avec succès")
-    traitmentdenombre()
-# Function to insert new entries
-def Newinsert(t,i):
-    with open("ficherjdid.txt", "a") as f:
-            date_obj = datetime.now()
-            day = date_obj.strftime("%A")
-            a = input(" tu veux chnanger le a 1=nouvelle mois else 0")
-            while not(a.isdecimal() and (0<=int(a)<3)):
-                a = input("Erreur, tu veux chnanger le a 1=nouvelle mois else 0")
-            if int(a)==1:
-                tot= float(input("donner le montant de mois: ")),
-            #tot=total(f)
-            x ={
-                    "tot":tot,
-                    "day": day,
-                    "mas": input("chnwa srafet ===> "),
-                    "dat": str(date_obj),
-                    "mnt": float(input("9adech ====> ")),
-                    "des": input("tfatheelll ====> "),
-                    "cos": f"{date_obj.day}-{date_obj.month}-{date_obj.year}"
-                    }
-            x={"rest":0,}
-            t[i]["day"]=x["day"]
-            t[i]["mas"]=x["mas"]
-            t[i]["mnt"]=x["mnt"]
-            t[i]["des"]=x["des"]
-            t[i]["dat"]=x["dat"]
-            t[i]["cos"]=x["cos"]
-            t[i]["rest"]=x["rest"]
-            i=i+1
-            last_day = t[i-1]["day"]
-            if last_day!= day:
-                x['day']="*"
-            else:
-                x['day']=day
-            f.write("\n".join([f"{x['day']}:\nchnwa chrit=> {x['mas']}\n9adech srafet=> {x['mnt']}DT\nkifech=> {x['des']}\ndate=> {x['dat']}\n{x['cos']}", ""]))
-            print("saved")
-    f.close()
-    if input("t3awed t3abi (true/false): ").lower() != "false":
-            Newinsert(t,i)
-    if input("enregistrer 0 ou non 1: ") == "0":
-            print("fichtxt saved")
-            fichierfix(t,i)
-    else:
-            traitmentdenombre()
-# Function to save data to fixed file
-def fichierfix(t,n):
-    with open("ficherfix.dat", "ab") as ft:
-        for i in range(n):
-            dump(t[i], ft)
-    print("fichfix saved succsfuly")
-# Function to manage main choices
-def traitmentdenombre():
-    print("Votre choix : ")
-    choices = ["REMPLISSAGE JDID", "VUE FIXE", "FICHER SUPRIM", "RECHERCHE DATE EXACT", "Quitter"]
-    for i, choice in enumerate(choices):
-        print(f"Choix {i + 1} pour ==> {choice}")
-    n = input("Donner un nombre: ")
-    while not n.isdecimal() or not (1 <= int(n) <= len(choices)):
-        n = input("Erreur, donner un nombre entre 1 et 5: ")
-    n = int(n)
-    if n == 1:
-        qq = input("si le tableau est n'existe pas taper entre : ")
-        if qq:
-            i=loadt(t)
-            Newinsert(t,i)
+# Chemins des fichiers
+TEXT_FILE = "expenses_log.txt"
+DATA_FILE = "expenses.dat"
+
+# Fonction pour afficher le contenu d'un fichier texte
+def vue_fichier(filename):
+    try:
+        print("\n--- Contenu du fichier ---")
+        with open(filename, "r") as file:
+            for line in file:
+                print(line.strip())
+    except FileNotFoundError:
+        print("Fichier introuvable.")
+    except Exception as e:
+        print("Erreur lors de la lecture :", e)
+
+# Fonction pour supprimer les fichiers
+def supprimer_fichier():
+    try:
+        print("Choisissez le fichier à supprimer :")
+        print("1. Fichier texte (expenses_log.txt)")
+        print("2. Fichier binaire (expenses.dat)")
+        choix = input("Votre choix : ")
+
+        if choix == "1":
+            open(TEXT_FILE, "w").close()
+            print("Fichier texte supprimé avec succès.")
+        elif choix == "2":
+            open(DATA_FILE, "wb").close()
+            print("Fichier binaire supprimé avec succès.")
         else:
-            i=0
-            Newinsert(t,i)
-    elif n == 2:
-        g = int(input("vue fich txt (1) ou fix (0): "))
-        vuefich("ficherjdid.txt" if g == 1 else "ficherfix.dat", "rb" if g == 0 else "r")
-    elif n == 3:
-        fichsupp()
-    elif n == 4:
-        recherche(t)
-    else:
-        print("Au revoir!")
-# Main program entry
-dict={
-                    "tot":float(),
-                    "day":str ,
-                    "mas":str ,
-                    "mnt":float(), 
-                    "des":str,
-                    "dat":str,
-                    "cos":str,
-                    "rest":float,
-                }
-t=array([dict]*2)
-traitmentdenombre()
+            print("Choix invalide.")
+    except Exception as e:
+        print("Erreur lors de la suppression :", e)
+
+# Fonction pour insérer de nouvelles données directement dans le fichier texte
+def nouvelle_insertion():
+    try:
+        now = datetime.now()
+        jour = now.strftime("%A")
+        montant_total = float(input("Montant du mois (DT) : ")) if input("Nouveau mois ? (1 pour oui, autre pour non) : ") == "1" else 0
+
+        nouveau_record = {
+            "tot": montant_total,
+            "day": jour,
+            "mas": input("Qu'avez-vous dépensé ? : "),
+            "mnt": float(input("Montant (DT) : ")),
+            "des": input("Description : "),
+            "dat": now.strftime("%Y-%m-%d %H:%M:%S"),
+            "cos": now.strftime("%d-%m-%Y"),
+        }
+
+        with open(TEXT_FILE, "a") as file:
+            file.write(f"{jour} :\n")
+            file.write(f"  Qu'avez-vous dépensé ? {nouveau_record['mas']}\n")
+            file.write(f"  Montant : {nouveau_record['mnt']} DT\n")
+            file.write(f"  Description : {nouveau_record['des']}\n")
+            file.write(f"  Date : {nouveau_record['dat']}\n")
+            file.write(f"  Date clé : {nouveau_record['cos']}\n\n")
+
+        print("Dépense enregistrée avec succès.")
+
+        if input("Ajouter une autre dépense ? (true/false) : ").lower() != "false":
+            nouvelle_insertion()
+    except ValueError:
+        print("Veuillez entrer un montant valide.")
+    except Exception as e:
+        print("Erreur lors de l'insertion :", e)
+
+# Fonction pour sauvegarder les données du fichier texte vers le fichier binaire si le jour change
+def sauvegarder_dans_fichier_binaire():
+    try:
+        with open(TEXT_FILE, "r") as file:
+            lignes = file.readlines()
+
+        records = []
+        record = {}
+        for ligne in lignes:
+            if " :" in ligne:
+                if record:
+                    records.append(record)
+                record = {"day": ligne.split(" :")[0].strip()}
+            elif "Qu'avez-vous dépensé ?" in ligne:
+                record["mas"] = ligne.split("?")[1].strip()
+            elif "Montant :" in ligne:
+                record["mnt"] = float(ligne.split(":")[1].strip().replace(" DT", ""))
+            elif "Description :" in ligne:
+                record["des"] = ligne.split(":")[1].strip()
+            elif "Date :" in ligne:
+                record["dat"] = ligne.split(":")[1].strip()
+            elif "Date clé :" in ligne:
+                record["cos"] = ligne.split(":")[1].strip()
+
+        if record:
+            records.append(record)
+
+        with open(DATA_FILE, "ab") as bin_file:
+            for record in records:
+                dump(record, bin_file)
+
+        open(TEXT_FILE, "w").close()
+        print("Données sauvegardées dans le fichier binaire et fichier texte réinitialisé.")
+
+    except FileNotFoundError:
+        print("Fichier texte introuvable.")
+    except Exception as e:
+        print("Erreur lors de la sauvegarde :", e)
+
+# Fonction pour rechercher une date dans le fichier texte
+def recherche_date():
+    try:
+        date_recherchee = input("Donner la date (format JJ-MM-AAAA) : ")
+        trouve = False
+
+        with open(TEXT_FILE, "r") as file:
+            print("\n--- Résultats de la recherche ---")
+            for line in file:
+                if date_recherchee in line:
+                    trouve = True
+                    print(line.strip())
+                    for _ in range(4):
+                        print(file.readline().strip())
+
+        if not trouve:
+            print("Aucune correspondance trouvée pour cette date.")
+    except FileNotFoundError:
+        print("Fichier introuvable.")
+    except Exception as e:
+        print("Erreur lors de la recherche :", e)
+
+# Fonction principale pour gérer les choix
+def menu_principal():
+    while True:
+        print("\n=== Gestion des Dépenses ===")
+        print("1. Ajouter une nouvelle dépense")
+        print("2. Voir le contenu du fichier texte")
+        print("3. Sauvegarder les données dans le fichier binaire")
+        print("4. Supprimer un fichier")
+        print("5. Rechercher une dépense par date")
+        print("6. Quitter")
+
+        choix = input("Choisissez une option (1-6) : ")
+        if choix == "1":
+            nouvelle_insertion()
+        elif choix == "2":
+            vue_fichier(TEXT_FILE)
+        elif choix == "3":
+            sauvegarder_dans_fichier_binaire()
+        elif choix == "4":
+            supprimer_fichier()
+        elif choix == "5":
+            recherche_date()
+        elif choix == "6":
+            print("Au revoir !")
+            break
+        else:
+            print("Choix invalide, veuillez réessayer.")
+
+# Lancer le programme principal
+if __name__ == "__main__":
+    menu_principal()
